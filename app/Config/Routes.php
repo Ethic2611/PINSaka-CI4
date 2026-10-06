@@ -7,11 +7,6 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Halaman Utama & Auth
-$routes->addRedirect('/', 'login');
-// Tambahkan baris ini di Routes.php
-$routes->get('auth/login', 'AuthController::login');
-
-// Maka redirect '/' ini bisa berjalan:
 $routes->addRedirect('/', 'auth/login');
 
 // Autentikasi
@@ -21,79 +16,58 @@ $routes->get('register', 'AuthController::register');
 $routes->post('register/process', 'AuthController::registerProcess');
 $routes->get('logout', 'AuthController::logout');
 
-// Admin Panel
+// Route khusus ADMIN
 $routes->group('admin', function ($routes) {
     $routes->get('/', 'Admin::index');
     $routes->get('dashboard-admin', 'Admin\Dashboard::index');
     $routes->get('history', 'Admin\HistoryAdmin::index');
     
-    // Rute Peminjaman Ruangan
+    // Rute Peminjaman Ruangan Admin
     $routes->get('room-booking', 'Admin\RoomBooking::index');
     $routes->get('room-history', 'Admin\RoomHistory::index');
     $routes->get('approve/room/(:num)', 'Admin\RoomApproval::approve/$1');
     $routes->get('reject/room/(:num)', 'Admin\RoomApproval::reject/$1');
+    $routes->get('booking', 'Admin\Booking::room');      // Menampilkan form
+    $routes->post('booking/save', 'Admin\Booking::save'); // Menyimpan data
 
     // Rute Peminjaman Kendaraan
     $routes->get('vehicle-booking', 'Admin\VehicleBooking::index');
     $routes->get('approve/vehicle/(:num)', 'Admin\VehicleApproval::approve/$1');
     $routes->get('vehicle-history', 'Admin\VehicleApproval::history');
+    $routes->get('booking', 'Admin\Booking::vehicle');      // Menampilkan form
+    $routes->post('booking/save2', 'Admin\Booking::save2'); // Menyimpan data
 
-    // Rute Pelaporan Kerusakan (Damage Report)
+
+    // Rute Pelaporan Kerusakan
     $routes->get('damage-report', 'Admin\DamageReport::index');
-    // PERBAIKAN: Cukup 'damage-report/save' tanpa 'admin/' di depannya
     $routes->post('damage-report/save', 'Admin\DamageReport::save'); 
     $routes->get('damage-reports', 'Admin\DamageApproval::index');
     $routes->get('approve/damage/(:num)', 'Admin\DamageApproval::approve/$1');
     $routes->get('damage-history', 'Admin\DamageApproval::history');
 });
 
-// Route khusus USER (Peminjaman & Riwayat)
+// Route khusus USER
 $routes->group('user', ['filter' => 'authFilter'], function($routes) {
-    // User Dashboard & Fitur
-$routes->get('dashboard', 'User\DashboardController::index');
-$routes->get('booking/room', 'User\BookingController::room');
-$routes->get('booking/vehicle', 'User\BookingController::vehicle');
-$routes->get('booking/save', 'User\BookingController::save');
-$routes->get('history', 'User\History::index');
-$routes->get('history/pdf', 'User\History::pdf');
+    // User Dashboard & Fitur Utama
+    $routes->get('dashboard', 'User\DashboardController::index');
+    $routes->get('booking/room', 'User\BookingController::room');
+    $routes->get('booking/vehicle', 'User\BookingController::vehicle');
+    $routes->post('booking/save', 'User\BookingController::save');
 
-    // Route Peminjaman Ruangan
+    // Riwayat
+    $routes->get('history', 'User\History::index');
+    $routes->get('history/pdf', 'User\History::pdf');
+    $routes->get('history/getLatestData', 'User\History::getLatestData');
+
+    // Peminjaman Ruangan (Pengajuan)
     $routes->get('pinjam-ruangan', 'User\PengajuanController::ruangan');
     $routes->post('pinjam-ruangan/store', 'User\PengajuanController::storeRuangan');
-    $routes->post('user/room/store', 'User\PengajuanController::storeRuangan');
 
-    // Route Peminjaman Kendaraan
+    // Peminjaman Kendaraan
     $routes->get('pinjam-kendaraan', 'User\PengajuanController::kendaraan');
     $routes->post('pinjam-kendaraan/store', 'User\PengajuanController::storeKendaraan');
 
-    // Route Pelaporan Kerusakan
+    // Pelaporan Kerusakan
     $routes->get('lapor-kerusakan', 'User\PengajuanController::kerusakan');
     $routes->post('lapor-kerusakan/store', 'User\PengajuanController::storeKerusakan');
-
-    // 1. Peminjaman Ruangan
-    $routes->get('room', 'User\PengajuanController::ruangan');
-    $routes->post('room/store', 'User\PengajuanController::storeRuangan');
-
-    // 2. Peminjaman Kendaraan
-    $routes->get('vehicle', 'User\PengajuanController::kendaraan');
-    $routes->post('vehicle/store', 'User\PengajuanController::storeKendaraan');
-
-    // 3. Pelaporan Kerusakan
-    $routes->get('kerusakan', 'User\PengajuanController::kerusakan');
-    $routes->post('kerusakan/store', 'User\PengajuanController::storeKerusakan');
-
-    // 4. Riwayat Pengajuan
-    $routes->get('history', 'User\HistoryController::index');
-    $routes->get('history/getLatestData', 'User\History::getLatestData');
-
-    // // Riwayat Pengajuan
-    // $routes->get('history', 'User\HistoryController::index');
-    // // Form Peminjaman Ruangan
-    // $routes->get('User/room', 'User\BookingController::room');
-    
-    // // Simpan Pengajuan (Aksi Form)
-    // $routes->post('User/save', 'User\BookingController::save');
-    
-    // // Riwayat Pengajuan User
-    // $routes->get('User/history', 'User\BookingController::history');
 });

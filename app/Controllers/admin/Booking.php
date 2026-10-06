@@ -3,7 +3,8 @@
 namespace App\Controllers\Admin; // Perbaikan namespace untuk folder admin
 
 use App\Controllers\BaseController;
-use App\Models\RoomBookingModel;
+use App\Models\RoomBookingMA;
+use App\Models\VehicleBookingMA;
 
 class Booking extends BaseController
 {
@@ -82,7 +83,7 @@ class Booking extends BaseController
 
     public function save()
     {
-        $bookingModel = new RoomBookingModel();
+        $bookingModel = new RoomBookingMA();
 
         // 1. Ambil data time_slots (mencakup pengecekan jika dikirim sebagai array checkbox 'time_slots[]' atau single 'time_slot')
         $rawTimeSlots = $this->request->getPost('time_slots') ?? $this->request->getPost('time_slot');
@@ -113,7 +114,45 @@ class Booking extends BaseController
 
         // 4. Simpan ke database
         if ($bookingModel->insert($data)) {
-            return redirect()->to(site_url('dashboard'))->with('success', 'Permohonan peminjaman berhasil diajukan!');
+            return redirect()->to(site_url('admin/dashboard-admin'))->with('success', 'Permohonan peminjaman berhasil diajukan!');
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data peminjaman.');
+        }
+    }
+    public function save2()
+    {
+        $bookingModel = new VehicleBookingMA();
+
+        // 1. Ambil data time_slots (mencakup pengecekan jika dikirim sebagai array checkbox 'time_slots[]' atau single 'time_slot')
+        $rawTimeSlots = $this->request->getPost('time_slots') ?? $this->request->getPost('time_slot');
+
+        // 2. Jika input berupa array (dari checkbox), gabungkan menjadi teks string (contoh: "Pagi, Siang")
+        if (is_array($rawTimeSlots)) {
+            $timeSlot = implode(', ', $rawTimeSlots);
+        } else {
+            $timeSlot = $rawTimeSlots ?? '';
+        }
+
+        // 3. Ambil dan susun data request
+        $data = [
+            'full_name'       => $this->request->getPost('full_name'),
+            'nip'             => $this->request->getPost('nip'),
+            'department'      => $this->request->getPost('department'),
+            'phone'           => $this->request->getPost('phone'),
+            'email'           => $this->request->getPost('email'),
+            'type'            => $this->request->getPost('type'),
+            'item'            => $this->request->getPost('item'),
+            'purpose'         => $this->request->getPost('purpose'),
+            'personnel_count' => $this->request->getPost('personnel_count'),
+            'start_date'      => $this->request->getPost('start_date'),
+            'end_date'        => $this->request->getPost('end_date'),
+            'time_slot'       => $timeSlot, // Nilai time_slot dipastikan berisi string dan tidak NULL
+            'status'          => 'Pending'
+        ];
+
+        // 4. Simpan ke database
+        if ($bookingModel->insert($data)) {
+            return redirect()->to(site_url('admin/dashboard-admin'))->with('success', 'Permohonan peminjaman berhasil diajukan!');
         } else {
             return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data peminjaman.');
         }

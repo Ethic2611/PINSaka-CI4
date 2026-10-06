@@ -33,7 +33,7 @@
         <a href="<?= site_url('admin/dashboard-admin') ?>" class="back-link">← Kembali ke Dashboard</a>
         <h1>Peminjaman Kendaraan Dinas</h1>
         
-        <form method="post" action="<?= site_url('booking/save') ?>">
+        <form method="post" action="<?= site_url('admin/booking/save2') ?>">
             <?= csrf_field() ?>
             <input type="hidden" name="type" value="Kendaraan">
             

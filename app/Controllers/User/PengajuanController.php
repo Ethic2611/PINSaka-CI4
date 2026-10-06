@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
+use App\Models\RoomBookingModel;
 
 class PengajuanController extends BaseController
 {
@@ -16,7 +17,7 @@ class PengajuanController extends BaseController
     public function storeRuangan()
     {
         // Logika simpan data ruangan
-        return redirect()->to(site_url('user/history'))->with('success', 'Pengajuan peminjaman ruangan berhasil dikirim.');
+        return redirect()->to(site_url('user/room'))->with('success', 'Pengajuan peminjaman ruangan berhasil dikirim.');
     }
 
     // Tampilan Form Peminjaman Kendaraan (user/vehicle)

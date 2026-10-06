@@ -36,7 +36,7 @@
     <a href="<?= site_url('dashboard') ?>" class="back-link">← Kembali ke Dashboard</a>
     <h1>Peminjaman Ruang Rapat</h1>
 
-    <form method="post" action="<?= site_url('booking/save') ?>">
+    <form method="post" action="<?= site_url('admin/booking/save') ?>">
         <?= csrf_field() ?>
         <input type="hidden" name="type" value="Ruangan">
 
